@@ -1,0 +1,16 @@
+testing notes
+
+setUser
+{ "user_id": "wessel" }
+
+action
+{
+"type": "ADD_JOB",
+"job": {
+   "job_id": "job1",
+   "user_id": "wessel",
+   "statement": "0=1"
+}
+}
+
+
