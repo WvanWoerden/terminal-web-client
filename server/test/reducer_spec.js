@@ -107,7 +107,8 @@ describe('reducer', () => {
 		});
 		let strippedJob2 = job2('');
 		delete strippedJob2.status;
-		const action = addJob(strippedJob2);
+		delete strippedJob2.user_id;
+		const action = addJob(strippedJob2, 'user2');
 		const nextState = reducer(state, action);
 		expect(nextState).to.equal(fromJS({
 			jobs: { job1: job1('QUEUED'), job2: job2('QUEUED') },

@@ -7,8 +7,9 @@ const INITIAL_STATE = Map({
 	done: List()
 });
 
-function applyAddJob(state, job) {
+function applyAddJob(state, job, user_id) {
 	job['status'] = 'QUEUED';
+	job['user_id'] = user_id;
 	return state.updateIn(['queue'], arr => arr.push(job.job_id))
 				.setIn(['jobs', job.job_id], fromJS(job));
 }
@@ -56,7 +57,7 @@ export default function reducer(state = INITIAL_STATE, action) {
 		case 'MOVE_TO_TIMEOUT':
 			return applyMoveToTimeout(state, action.job_id);
 		case 'ADD_JOB':
-			return applyAddJob(state, action.job);
+			return applyAddJob(state, action.job, action.user_id);
 		case 'REMOVE_JOB':
 			return applyRemoveJob(state, action.job_id)
 	}

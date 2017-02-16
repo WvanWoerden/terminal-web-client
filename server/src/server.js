@@ -1,22 +1,27 @@
 import Server from 'socket.io';
 
-function emitUserStates(state, io, authConnections) {
-	let userStates = {};
+function emitUserJobs(state, io, authConnections) {
+	let UserJobs = {};
 	for( let user_id in authConnections ) {
-		userStates[user_id] = []; // to hold jobs
+		UserJobs[user_id] = []; // to hold jobs
 	}
 
 	for( let job_id of state.done.concat(state.running).concat(state.queue) ) {
 		let job = state.jobs[job_id];
-		if( userStates[job.user_id] ) {
-			userStates[job.user_id].push( job );
+		if( UserJobs[job.user_id] ) {
+			UserJobs[job.user_id].push( job );
 		}
 	}
 
 	for( let user_id in authConnections ) {
 		let sockets = authConnections[user_id];
 		for( let socket of sockets )
-			socket.emit('state', { state: userStates[user_id] });
+			socket.emit('jobs', 
+				{ 
+					type: 'SET_JOBS', 
+					jobs: UserJobs[user_id] 
+				}
+			);
 	}
 
 }
@@ -27,7 +32,7 @@ export default function startServer(store) {
 	let authConnections = {}; // user_id => [...sockets]
 
 	store.subscribe(
-		() => emitUserStates(store.getState().toJS(), io, authConnections)
+		() => emitUserJobs(store.getState().toJS(), io, authConnections)
 	);
 
 	io.on('connection', (socket) => {
@@ -42,9 +47,12 @@ export default function startServer(store) {
 				else
 					authConnections[handshake.user_id] = [ socket ];
 
-				emitUserStates(store.getState().toJS(), io, authConnections);
+				emitUserJobs(store.getState().toJS(), io, authConnections);
 
-				socket.on('action', store.dispatch.bind(store)); //insecure
+				socket.on('action', action => {
+					action['user_id'] = socket.user_id;
+					store.dispatch(action);
+				}); //insecure
 
 				socket.on('disconnect', function() {
 					let user_id = socket.user_id;

@@ -1,9 +1,10 @@
 var exec = require('child-process-promise').exec;
 
 // QUEUE movement actions
-export const addJob = job => ({
+export const addJob = (job, user_id) => ({
 	type: 'ADD_JOB',
-	job
+	job,
+	user_id
 });
 
 export const removeJob = job_id => ({
@@ -40,7 +41,7 @@ export const startJob = job_id => (dispatch, getState) => {
 	let cmd = 'echo hello';
 
 	return exec(cmd).then( result => {
-		if( result.stdout = 'TIMEOUT')
+		if( result.stdout === 'TIMEOUT')
 			dispatch(moveToTimeout(job_id));
 		else
 			dispatch(moveToSuccess(job_id, result.stdout));
