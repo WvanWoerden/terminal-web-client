@@ -7,10 +7,15 @@ import uuid from 'uuid';
 export const Creator = React.createClass({
 	mixins: [PureRenderMixin],
 	prepareJob: function() {
-		return { job_id: uuid.v4(), statement: "0=1" };
+		let name = this.textInput.value;
+		return { job_id: uuid.v4(), data: { name } };
+	},
+	componentDidMount() {
+		this.textInput.focus();
 	},
 	render: function() {
 		return <div className='creator'>
+					<input type='text' ref={(input) => { this.textInput = input; }} />
 					<button onClick={() => this.props.addJob(this.prepareJob())}>Send {this.props.user_id}</button>
 				</div>
 	}

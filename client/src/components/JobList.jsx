@@ -6,15 +6,18 @@ import uuid from 'uuid';
 
 export const JobList = React.createClass({
 	mixins: [PureRenderMixin],
-	prepareJob: function() {
-		return { job_id: uuid.v4(), statement: "0=1" };
-	},
 	getJobs() {
 		return this.props.jobs || [];
 	},
 	getResult(job) {
-		if( job.get('status') == 'SUCCESS' )
+		if( job.get('status') === 'SUCCESS' )
 			return job.get('result');
+		else
+			return null;
+	},
+	getError(job) {
+		if( job.get('status') === 'ERROR' )
+			return <span style={{color: 'red'}} >{job.get('error')}</span>;
 		else
 			return null;
 	},
@@ -23,7 +26,7 @@ export const JobList = React.createClass({
 					<h1>Job List</h1>
 					<ul>
 						{this.getJobs().map(job => 
-							<li key={job.get('job_id')}>{job.get('job_id')} {this.getResult(job)}</li>
+							<li key={job.get('job_id')}>{job.get('job_id')} {this.getResult(job)} {this.getError(job)}</li>
 						)}
 					</ul>
 				</div>

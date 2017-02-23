@@ -1,3 +1,4 @@
+import helloCommand from './commands/hello';
 var exec = require('child-process-promise').exec;
 
 // QUEUE movement actions
@@ -37,20 +38,26 @@ export const moveToError = (job_id, error) => ({
 export const startJob = job_id => (dispatch, getState) => {
 	dispatch(moveToRunning(job_id));
 
-	// todo: prepare command
-	let cmd = 'echo hello';
+	let helloCmd = new helloCommand(getState().getIn(['jobs', job_id, 'data']).toJS());
+	if( helloCmd.hasError() ) {
+		dispatch(moveToError(job_id, helloCmd.getError()));
+	} else {
+		let execCommand = helloCmd.getCommand();
 
-	return exec(cmd).then( result => {
-		if( result.stdout === 'TIMEOUT')
-			dispatch(moveToTimeout(job_id));
-		else
-			dispatch(moveToSuccess(job_id, result.stdout));
-		dispatch(startJobIfPossible);
-	}).catch( error => {
-		console.log(error);
-		dispatch(moveToError(job_id, result));
-		dispatch(startJobIfPossible);
-	});
+		return exec(execCommand).then( result => {
+			if( result.stdout === 'TIMEOUT')
+				dispatch(moveToTimeout(job_id));
+			else
+				dispatch(moveToSuccess(job_id, result.stdout));
+			dispatch(startJobIfPossible());
+		}).catch( error => {
+			console.log(error);
+			dispatch(moveToError(job_id, error));
+			dispatch(startJobIfPossible());
+		});
+	}
+
+	
 }
 
 export const startJobIfPossible = () => (dispatch, getState) => {
