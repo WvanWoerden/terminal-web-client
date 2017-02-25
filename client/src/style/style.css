@@ -1,0 +1,31 @@
+body {
+	background: #f9f9f9;
+	color: #333;
+}
+
+#app {
+	width: 700px;
+	margin: 40px auto 0 auto;
+	padding: 20px;
+	background: #fff;
+	border-color: #ddd;
+    border-radius: 4px 4px 0 0;
+    border-width: 1px;
+    border-style: solid;
+}
+
+#textareaAxioms {
+	height: 100px;
+}
+
+.axiomList {
+	list-style: none;
+	margin: 0 0 0 0;
+	padding: 0 0 0 0;
+}
+
+.resultList {
+	list-style: none;
+	margin: 0 0 0 0;
+	padding: 0 0 0 0;
+}

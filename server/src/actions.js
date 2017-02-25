@@ -1,4 +1,4 @@
-import helloCommand from './commands/hello';
+import boogCommand from './commands/boog';
 var exec = require('child-process-promise').exec;
 
 // QUEUE movement actions
@@ -38,17 +38,21 @@ export const moveToError = (job_id, error) => ({
 export const startJob = job_id => (dispatch, getState) => {
 	dispatch(moveToRunning(job_id));
 
-	let helloCmd = new helloCommand(getState().getIn(['jobs', job_id, 'data']).toJS());
-	if( helloCmd.hasError() ) {
-		dispatch(moveToError(job_id, helloCmd.getError()));
+	let boogCmd = new boogCommand(getState().getIn(['jobs', job_id, 'data']).toJS());
+	if( boogCmd.hasError() ) {
+		dispatch(moveToError(job_id, boogCmd.getError()));
 	} else {
-		let execCommand = helloCmd.getCommand();
+		let execCommand = boogCmd.getCommand();
 
-		return exec(execCommand).then( result => {
-			if( result.stdout === 'TIMEOUT')
+		return exec(execCommand)
+			.then( result => JSON.parse(result.stdout) )
+			.then( result => {
+			if( result.type === 'TIMEOUT')
 				dispatch(moveToTimeout(job_id));
+			else if( result.type === 'ERROR' )
+				dispatch(moveToError(job_id, result.error));
 			else
-				dispatch(moveToSuccess(job_id, result.stdout));
+				dispatch(moveToSuccess(job_id, result.result));
 			dispatch(startJobIfPossible());
 		}).catch( error => {
 			console.log(error);

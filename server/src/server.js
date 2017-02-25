@@ -9,7 +9,7 @@ function emitUserJobs(state, io, authConnections) {
 	for( let job_id of state.done.concat(state.running).concat(state.queue) ) {
 		let job = state.jobs[job_id];
 		if( UserJobs[job.user_id] ) {
-			UserJobs[job.user_id].push( job );
+			UserJobs[job.user_id].unshift( job );
 		}
 	}
 

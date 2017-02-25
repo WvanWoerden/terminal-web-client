@@ -6,10 +6,13 @@ import io from 'socket.io-client';
 import reducer from './reducer';
 import remoteActionMiddleWare from './remote_action_middleware';
 import App from './components/App';
+import Result from './components/Result';
 import {CreatorContainer} from './components/Creator';
 import {JobListContainer} from './components/JobList';
 import getClientId from './client_id';
 import {setUser} from './actions';
+import Bootstrap from 'bootstrap/dist/css/bootstrap.css';
+import Style from './style/style.css';
 
 const socket = io('http://localhost:8090');
 
