@@ -1,11 +1,14 @@
+var escapeShell = function(cmd) {
+  return '"'+cmd.replace(/(["\s'$`\\])/g,'\\$1')+'"';
+};
+
 export default class boogCommand {
 	constructor(data) {
 		this.error = false;
 		this.errorMsg = '';
 
 		this.statement = data.statement ? data.statement : '2=3';
-		this.axioms = data.axioms;
-		console.log( this.axioms );
+		this.axioms = data.axioms ? data.axioms : [];
 	}
 
 	hasError() {
@@ -17,9 +20,8 @@ export default class boogCommand {
 	}
 
 	getCommand() {
-		let cmd = 'D:/Git/BOOG/bin/json.exe "'+this.statement+'"';
-		cmd = this.axioms.reduce( (cmd, axiom) => cmd + ' "' + axiom + '"' , cmd);
-		console.log(cmd);
+		let cmd = 'D:/Git/BOOG/bin/json.exe '+escapeShell(this.statement);
+		cmd = this.axioms.reduce( (cmd, axiom) => cmd + ' ' + escapeShell(axiom) , cmd);
 		return cmd;
 	}
 }
