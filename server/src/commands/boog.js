@@ -20,8 +20,10 @@ export default class boogCommand {
 	}
 
 	getCommand() {
-		let cmd = 'D:/Git/BOOG/bin/json.exe '+escapeShell(this.statement);
-		cmd = this.axioms.reduce( (cmd, axiom) => cmd + ' ' + escapeShell(axiom) , cmd);
-		return cmd;
+		return "D:/Git/BOOG/bin/json.exe";
+	}
+
+	getArguments() {
+		return [this.statement, ...this.axioms];
 	}
 }

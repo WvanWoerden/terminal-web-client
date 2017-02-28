@@ -1,5 +1,5 @@
 import boogCommand from './commands/boog';
-var exec = require('child-process-promise').exec;
+import { execFile } from 'process-promises';
 
 // QUEUE movement actions
 export const addJob = (job, user_id) => ({
@@ -42,9 +42,8 @@ export const startJob = job_id => (dispatch, getState) => {
 	if( boogCmd.hasError() ) {
 		dispatch(moveToError(job_id, boogCmd.getError()));
 	} else {
-		let execCommand = boogCmd.getCommand();
 
-		return exec(execCommand)
+		return execFile( boogCmd.getCommand(), boogCmd.getArguments())
 			.then( result => JSON.parse(result.stdout) )
 			.then( result => {
 			if( result.type === 'TIMEOUT')
